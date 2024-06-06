@@ -1,0 +1,519 @@
+#include <iostream>
+#include <vector>
+#include <limits>
+#include <algorithm>
+#include <cstdlib>
+#include <chrono>
+#include <thread>
+using namespace std;
+
+
+/***** Start of Insertion Sort *****/
+void insertionSort(vector <int> arr, int size) {
+	cout << "\nOriginal: ";
+	for (int z : arr) {
+		cout << z << " ";
+	} cout << endl << endl;
+
+	for (int i = 1; i < size; ++i) {
+		int temp = arr[i];
+		int j = i - 1;
+
+		while (j >= 0 && arr[j] > temp) {
+			arr[j + 1] = arr[j];
+			--j;
+		} arr[j + 1] = temp;
+		
+		cout << "iteration pass: ";
+		for (int z : arr) {
+			cout << z << " ";
+		} cout << endl;
+	}
+
+	cout << "\nSorted: ";
+	for (int z : arr) {
+		cout << z << " ";
+	} cout << endl;
+}
+/***** End of Insertion Sort *****/
+
+
+/***** Start of Selection Sort *****/
+void selectionSort(vector <int> arr, int size) {
+	cout << "\nOriginal: ";
+	for (int z : arr) {
+		cout << z << " ";
+	} cout << endl << endl;
+
+	for (int i = 0; i < size; ++i) {
+		int temp;
+		int currIndex;
+		int lowest = numeric_limits<int>::max();
+
+		for (int j = i; j < size; ++j) {
+			if (arr[i] > arr[j]) {
+				if (arr[j] < lowest) {
+					lowest = arr[j];
+					currIndex = j;
+				}
+			}
+		}
+		if (lowest != numeric_limits<int>::max()) {
+			temp = arr[i];
+			arr[i] = lowest;
+			arr[currIndex] = temp;
+		}
+		
+		cout << "iteration pass: ";
+		for (int z : arr) {
+			cout << z << " ";
+		} cout << endl;
+	}
+
+	cout << "\nSorted: ";
+	for (int z : arr) {
+		cout << z << " ";
+	} cout << endl;
+}
+/***** End of Selection Sort *****/
+
+
+/***** Start of Merge Sort *****/
+int n;
+void displayArray(const vector <int>& arr, int left, int right) {
+    for (int i = left; i <= right; ++i) {
+        cout << arr[i];
+        if (i < right) cout << ", ";
+    }
+}
+
+void merge(vector <int>& arr, int left, int mid, int right) {
+    vector<int> L(arr.begin() + left, arr.begin() + mid + 1);
+    vector<int> R(arr.begin() + mid + 1, arr.begin() + right + 1);
+
+    int i = 0, j = 0, k = left;
+
+    while (i < L.size() && j < R.size()) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < L.size()) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < R.size()) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(vector <int>& arr, int left, int right) {
+    if (left < right) {
+        int mid = left+(right-left)/ 2;
+        mergeSort(arr, left, mid);
+        
+        if (left == 0 && right == n -1) {
+            cout << "\n\nPartition: ";
+            displayArray(arr, mid + 1, right);
+            cout << endl;
+        }
+        
+        mergeSort(arr, mid + 1, right);
+        cout << "\nSort: ";
+        displayArray(arr, left, mid);
+        cout << ", ";
+        displayArray(arr, mid + 1, right);
+        cout << endl;
+
+        cout << "Merge: ";
+        merge(arr, left, mid, right);
+        displayArray(arr, left, right);
+        cout << endl;
+    }
+}
+/***** End of Merge Sort *****/
+
+
+/***** Start of Quick Sort *****/
+void quickSort(vector <int>& arr, int low, int high);
+int partition(vector <int>& arr, int low, int high);
+
+void quickSort(vector <int>& arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        
+        cout << "iteration pass: ";
+        for (int z : arr) {
+            cout << z << " ";
+        } cout << endl;
+        
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int partition(vector <int>& arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    
+    return i + 1;
+}
+/***** End of Quick Sort *****/
+
+
+/***** Start of Heap Sort *****/
+int iteration = 1;
+
+void printArray(const vector <int>& arr) {
+    cout << "iteration " << iteration << ": ";
+    for (int i : arr) {
+    	cout << i << " ";
+    } cout << endl;
+    iteration++;
+}
+
+void heapify(vector <int>& arr, int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    
+    printArray(arr);
+
+    if (left < n && arr[left] > arr[largest]) {
+        largest = left;
+    }
+
+    if (right < n && arr[right] > arr[largest]) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(vector<int>& arr) {
+    int n = arr.size();
+    
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+
+    for (int i = n - 1; i > 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+/***** End of Heap Sort *****/
+
+
+/***** Start of Bubble Sort *****/
+void bubbleSort(vector <int> arr, int size) {
+    cout << "Original: ";
+    for (int z : arr) {
+        cout << z << " ";
+    } cout << endl << endl;
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 1; j < size; j++) {
+            if (arr[j - 1] > arr[j]) {
+                swap(arr[j - 1], arr[j]);
+            }
+        }
+
+        cout << "Iteration " << i + 1 << ": ";
+        for (int z : arr) {
+            cout << z << " ";
+        } cout << endl;
+    }
+
+    cout << "\nSorted: ";
+    for (int z : arr) {
+        cout << z << " ";
+    } cout << endl;
+}
+/***** End of Bubble Sort *****/
+
+
+/***** Start of Cocktail Shaker Sort *****/
+void cocktailSort(vector <int> arr, int size) {
+    cout << "Original: ";
+    for (int z : arr) {
+        cout << z << " ";
+    } cout << endl << endl;
+
+    for (int i = 0; i < size; i++) {
+        int lowest = arr[i];
+        if (i % 2 == 0) {
+            // left to right
+            for (int j = 1; j < size; j++) {
+                if (arr[j - 1] > arr[j]) {
+                    swap(arr[j - 1], arr[j]);
+                }
+            }
+        } else {
+            // right to left
+            for (int j = size - 1; j > 0; j--) {
+                if (arr[j] < arr[j - 1]) {
+                    swap(arr[j], arr[j - 1]);
+                }
+            }
+        }
+		
+        cout << "Iteration " << i + 1 << ": ";
+        for (int z : arr) {
+            cout << z << " ";
+        } cout << endl;
+    } 
+
+    cout << "\nSorted: ";
+    for (int z : arr) {
+        cout << z << " ";
+    } cout << endl;
+}
+/***** End of Cocktail Shaker Sort *****/
+
+int main() {
+
+	int size;
+	int mode;
+	int elements;
+	
+    vector <int> arr;
+
+	string ans;
+
+	do {
+		system("cls");
+		cout << "1. Insertion Sort\n2. Selection Sort\n3. Merge Sort\n4. Quick Sort\n5. Heap Sort\n6. Bubble Sort\n7. Cocktail Shaker\n8. Exit\n>>  ";
+		cin >> mode;
+
+		if (mode == 1) {
+			do {
+				system("cls");
+				cout << "Insertion Sort" << endl;
+
+				int size2;
+
+				cout << "\nEnter the size of your array: ";
+				cin >> size2;
+
+				vector <int> arr2;
+
+				cout << endl;
+				while (arr2.size() != size2) {
+					cout << "Enter an element: ";
+					cin >> elements;
+					arr2.push_back(elements);
+				}
+
+				insertionSort(arr2, size2);
+
+				cout << "\n\nDo you want to try again (Y|N): ";
+				cin >> ans;
+			} while (ans == "y" || ans == "Y");
+		} else if (mode == 2) {
+			do {
+				system("cls");
+				cout << "Selection Sort" << endl;
+
+				int size1;
+
+				cout << "\nEnter the size of your array: ";
+				cin >> size1;
+
+				vector <int> arr1;
+
+				cout << endl;
+				while (arr1.size() != size1) {
+					cout << "Enter an element: ";
+					cin >> elements;
+					arr1.push_back(elements);
+				}
+
+				selectionSort(arr1, size1);
+
+				cout << "\n\nDo you want to try again (Y|N): ";
+				cin >> ans;
+			} while (ans == "y" || ans == "Y");
+		} else if (mode == 3) {
+			do {
+				system("cls");
+				cout << "Merge Sort" << endl;
+				
+				cout << "\nEnter the size of your array:  ";
+				cin >> n;
+				cout << endl;
+				
+				vector <int> arr(n);
+				
+				for (int i = 0; i < n; ++i) {
+					cout << "Enter an element: ";
+					cin >> arr[i];
+				}
+				
+				cout << "\nOriginal: ";
+				for (int z : arr) {
+					cout << z << " ";
+				} cout << endl << endl;
+				
+				int mid = n / 2;
+				
+				if (n % 2 != 0) {
+				    mid++;
+				}
+				
+				cout << "Partition: ";
+				
+				for (int z : arr) {
+					cout << z << " ";
+				} cout << endl;
+				
+				mergeSort(arr, 0, n-1);
+				
+				cout << "\nSorted: ";
+				for (int z : arr) {
+					cout << z << " ";
+				} cout << endl;
+				
+				cout << "\n\nDo you want to try again (Y|N): ";
+				cin >> ans;
+			} while (ans == "y" || ans == "Y");
+		} else if (mode == 4) {
+			do {
+				system("cls");
+				cout << "Quick Sort" << endl;
+				
+				cout << "\nEnter the size of your array: ";
+				cin >> n;
+				arr.resize(n);
+				cout << endl;
+				
+				for (int i = 0; i < n; ++i) {
+					cout << "Enter an element: ";
+					cin >> arr[i];
+				}
+				
+				cout << "\nOriginal: ";
+				for (int z : arr) {
+					cout << z << " ";
+				} cout << endl << endl;
+				
+				quickSort(arr, 0, arr.size() - 1);
+				
+				cout << "\nSorted: ";
+				for (int z : arr) {
+					cout << z << " ";
+				} cout << endl;
+				
+				cout << "\n\nDo you want to try again (Y|N): ";
+				cin >> ans;
+			} while (ans == "y" || ans == "Y");
+		} else if (mode == 5) {
+			do {
+		    	system("cls");
+		    	cout << "Heap Sort" << endl;
+		    	
+		    	vector <int> arrHeap;
+		    	
+			    cout << "\nEnter the size of your array: ";
+			    cin >> size;
+			    
+			    cout << endl;
+			    
+			    for (int i = 0; i < size; ++i) {
+			    	cout << "Enter an element: ";
+			    	cin >> elements;
+			    	arrHeap.push_back(elements);
+			    }
+			
+			    cout << "\nOriginal: ";
+			    for (int z : arrHeap) {
+			    	cout << z << " ";
+			    } cout << endl << endl;
+			
+			    heapSort(arrHeap);
+			
+			    cout << "\nSorted: ";
+			    for (int i : arrHeap) {
+			    	cout << i << " ";
+			    } cout << endl << endl << endl;
+			    
+			    cout <<  "Do you want to try again (Y|N): ";
+			    cin >> ans;
+		    } while (ans == "y" || ans == "Y");
+		} else if (mode == 6) {
+			do {
+				system("cls");
+				cout << "Bubble Sort" << endl;
+				
+				vector <int> arr;
+				
+				cout << "\nEnter the size of your array: ";
+				cin >> size;
+				
+				cout << endl;
+				
+				for (int i = 0; i < size; i++) {
+					cout << "Enter an element: ";
+					cin >> elements;
+					arr.push_back(elements);
+				} cout << endl;
+				
+				bubbleSort(arr, size);
+				
+				cout << "\n\nDo you want to try again (Y|N): ";
+				cin >> ans;
+			} while (ans == "y" || ans == "Y");
+		} else if (mode == 7) {
+			do {
+				system("cls");
+				cout << "Cocktail Shaker Sort" << endl;
+				
+				vector <int> arr;
+				
+				cout << "\nEnter the size of your array: ";
+				cin >> size;
+				
+				cout << endl;
+				
+				for (int i = 0; i < size; i++) {
+					cout << "Enter an element: ";
+					cin >> elements;
+					arr.push_back(elements);
+				} cout << endl;
+				
+				cocktailSort(arr, size);
+				
+				cout << "\n\nDo you want to try again (Y|N): ";
+				cin >> ans;
+			} while (ans == "y" || ans == "Y");
+		} else if (mode == 8) {
+			cout << "\n\n\nThanks." << endl;
+			break;
+		}
+	} while ((ans == "n" || ans == "N") && mode != 8);
+	
+	
+	cout << endl;
+	return 0;
+}
